@@ -61,86 +61,102 @@ class _MyHomePageState extends State<MyHomePage> {
         child: SingleChildScrollView(
           scrollDirection: Axis.vertical,
           
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              SizedBox(
-                height: height * 0.15,
-                child: FutureBuilder<int>(
-                  future: _counter,
-                  builder: (BuildContext context,AsyncSnapshot<int> snapshot) {
-                    if(snapshot.hasData){
-                      return Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              SizedBox(
-                                width: width * 0.2,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    IconButton(
-                                      icon: Image.asset('lib/src/assets/images/eye.png'),
-                                      iconSize: 50,
-                                      onPressed: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(builder: (context) => const BuyPage()),
-                                        );
-                                      },
+          child: FutureBuilder<int>(
+            future: _counter,
+            builder: (BuildContext context,AsyncSnapshot<int> snapshot) {
+              if(snapshot.hasData){
+                return Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    height: height * 0.15,
+                    child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  SizedBox(
+                                    width: width * 0.2,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      children: [
+                                        IconButton(
+                                          icon: Image.asset('lib/src/assets/images/eye.png'),
+                                          iconSize: 50,
+                                          onPressed: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(builder: (context) => const BuyPage()),
+                                            );
+                                          },
+                                        ),
+                                        Text(snapshot.data.toString()),
+                                      ],
                                     ),
-                                    Text(snapshot.data.toString()),
-                                  ],
-                                ),
-                              ),
-
-                            ],
-                        );
-                    }else{
-                      return const CircularProgressIndicator();
-                    }
-                  }
-                ),
-              ),
-              SizedBox(
-                height: height * 0.15,
-                width: width,
-                child: const Image(
-                    image: AssetImage("lib/src/assets/images/basketballtip.png"),
-                    fit: BoxFit.contain,
+                                  ),
+          
+                                ],
+                            )
                   ),
-              ),
-              SizedBox(
-                height: height * 0.8,
-                child: ListView.separated(
-                  itemCount: entries.length,
-                  separatorBuilder: (BuildContext context, int index) => const Divider(),
-                  itemBuilder: (BuildContext context, int index) {
-                    return GestureDetector(
-                      onTap: (() => {
-                        
-                        Navigator.pushNamed(
-                          context,
-                          PlayPage.routeName,
-                          arguments: ScreenArguments(entries[index].background,entries[index].name),
-                        ),
-                        _deducrementCounter()
-                      }),
-                      child: SizedBox(
-                        height: height * 0.1,
-                        width: width * 0.6,
-                        child: Image(
-                          image: entries[index].image,
-                          fit: BoxFit.contain,
-                        ),
-                      )
-                    );
-                  },
-                ),
-              )
-          ]),
+                  SizedBox(
+                    height: height * 0.15,
+                    width: width,
+                    child: const Image(
+                        image: AssetImage("lib/src/assets/images/basketballtip.png"),
+                        fit: BoxFit.contain,
+                      ),
+                  ),
+                  SizedBox(
+                    height: height * 0.8,
+                    child: ListView.separated(
+                      itemCount: entries.length,
+                      separatorBuilder: (BuildContext context, int index) => const Divider(),
+                      itemBuilder: (BuildContext context, int index) {
+                        return GestureDetector(
+                          onTap: (() => {
+                            if(snapshot.data != 0){
+                            Navigator.pushNamed(
+                              context,
+                              PlayPage.routeName,
+                              arguments: ScreenArguments(entries[index].background,entries[index].name),
+                            ),
+                            _deducrementCounter()
+                            }else{
+                              showDialog(context: this.context, builder: (context) {
+                                return AlertDialog(
+                                  title: const Text("Alert"),
+                                  content: const Text('Please buy more turn!'),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(context, 'OK'),
+                                      child: const Text('OK'),
+                                    ),
+                                  ],
+                                );
+                              },)
+                            }
+                          }),
+                          child: SizedBox(
+                            height: height * 0.1,
+                            width: width * 0.6,
+                            child: Image(
+                              image: entries[index].image,
+                              fit: BoxFit.contain,
+                            ),
+                          )
+                        );
+                      },
+                    ),
+                  )
+              ]);
+              }else{
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+              } 
+          ),
         ),
       ),
     );
